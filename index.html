@@ -1,0 +1,766 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive family itinerary for Perth, Rottnest Island and Margaret River, 30 December 2026 to 5 January 2027.">
+  <title>Perth, Rottnest and Margaret River family itinerary</title>
+  <style>
+    :root {
+      --navy: #123047;
+      --navy-2: #1b405b;
+      --paper: #f7f4ec;
+      --surface: #ffffff;
+      --ink: #243846;
+      --muted: #617483;
+      --line: #d7ddd9;
+      --teal: #0b8f88;
+      --teal-soft: #ddf1ed;
+      --blue: #2579a8;
+      --blue-soft: #e1eff7;
+      --coral: #e46f55;
+      --coral-soft: #fbe8e0;
+      --green: #547d57;
+      --green-soft: #e7f0e4;
+      --gold: #f0b84b;
+      --gold-soft: #fff1cf;
+      --shadow: 0 12px 34px rgba(18, 48, 71, 0.11);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    button, a { font: inherit; }
+
+    button:focus-visible, a:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 3px;
+    }
+
+    .hero {
+      color: white;
+      background:
+        radial-gradient(circle at 88% 20%, rgba(11, 143, 136, 0.32), transparent 28%),
+        linear-gradient(135deg, var(--navy), #0c2639 74%);
+      padding: 36px clamp(20px, 5vw, 72px) 32px;
+    }
+
+    .hero-inner, .page-shell { max-width: 1420px; margin: 0 auto; }
+
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 28px;
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+      color: #bcd5e4;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 1.04;
+      letter-spacing: -0.035em;
+    }
+
+    .hero-subtitle {
+      margin: 15px 0 0;
+      color: #d7e6ee;
+      font-size: clamp(1rem, 1.4vw, 1.25rem);
+      font-weight: 650;
+    }
+
+    .family-badge {
+      flex: none;
+      margin-top: 4px;
+      padding: 10px 17px;
+      border-radius: 999px;
+      background: var(--teal);
+      color: white;
+      font-size: 0.86rem;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .route {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(82px, 1fr));
+      gap: 0;
+      margin-top: 34px;
+      overflow-x: auto;
+      padding: 8px 1px 4px;
+    }
+
+    .route-stop {
+      position: relative;
+      min-width: 92px;
+      padding-top: 22px;
+      text-align: center;
+    }
+
+    .route-stop::before {
+      content: "";
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      width: 12px;
+      height: 12px;
+      z-index: 2;
+      border: 4px solid var(--navy);
+      border-radius: 50%;
+      background: white;
+      transform: translateX(-50%);
+    }
+
+    .route-stop::after {
+      content: "";
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: rgba(255,255,255,0.32);
+    }
+
+    .route-stop:last-child::after { display: none; }
+    .route-stop strong { display: block; font-size: 0.74rem; letter-spacing: 0.04em; }
+    .route-stop span { color: #aec7d6; font-size: 0.7rem; }
+
+    .tabs-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 244, 236, 0.96);
+      backdrop-filter: blur(14px);
+    }
+
+    .tabs-bar {
+      display: flex;
+      max-width: 1420px;
+      margin: 0 auto;
+      padding: 11px clamp(14px, 4vw, 56px);
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .tab-button {
+      flex: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 14px;
+      background: white;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 0.86rem;
+      font-weight: 780;
+      transition: transform 120ms ease, background 120ms ease, color 120ms ease;
+    }
+
+    .tab-button:hover { transform: translateY(-1px); }
+    .tab-button[aria-selected="true"] { border-color: var(--navy); background: var(--navy); color: white; }
+
+    .page-shell { padding: 32px clamp(18px, 5vw, 72px) 70px; }
+
+    .tab-panel[hidden] { display: none; }
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 24px;
+      margin-bottom: 23px;
+    }
+
+    .panel-heading h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(1.75rem, 3vw, 2.7rem);
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+    }
+
+    .panel-heading p { max-width: 700px; margin: 8px 0 0; color: var(--muted); }
+
+    .print-button {
+      flex: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 10px 14px;
+      background: var(--teal);
+      color: white;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .day-card {
+      display: flex;
+      min-height: 224px;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 3px 10px rgba(18,48,71,0.04);
+      color: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: transform 140ms ease, box-shadow 140ms ease;
+    }
+
+    .day-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+
+    .day-card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--accent, var(--blue));
+      color: white;
+    }
+
+    .day-card-header strong { font-size: 0.92rem; }
+    .day-card-header span { font-size: 0.78rem; font-weight: 850; }
+
+    .day-card-body { display: flex; flex: 1; flex-direction: column; padding: 16px; }
+    .day-card h3 { margin: 0 0 7px; color: var(--navy); font-size: 1.12rem; line-height: 1.2; }
+    .stay { margin: 0 0 12px; color: var(--muted); font-size: 0.83rem; font-weight: 700; }
+    .day-card p { margin: 0; font-size: 0.92rem; }
+    .key-time { margin-top: auto; padding-top: 14px; color: var(--accent, var(--blue)); font-size: 0.83rem; font-weight: 850; }
+
+    .summary-grid .day-card:nth-child(1), .summary-grid .day-card:nth-child(5) { --accent: var(--blue); }
+    .summary-grid .day-card:nth-child(2), .summary-grid .day-card:nth-child(6) { --accent: var(--coral); }
+    .summary-grid .day-card:nth-child(3), .summary-grid .day-card:nth-child(7) { --accent: var(--green); }
+    .summary-grid .day-card:nth-child(4) { --accent: var(--teal); }
+
+    .summary-banner {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .fact {
+      padding: 16px;
+      border-radius: 14px;
+      background: var(--navy);
+      color: white;
+    }
+
+    .fact span { display: block; color: #bed4e0; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; }
+    .fact strong { display: block; margin-top: 4px; font-size: 1.05rem; }
+
+    .day-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(270px, 0.75fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .timeline-card, .notes-card, .planning-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 5px 18px rgba(18,48,71,0.05);
+    }
+
+    .timeline-card { padding: 10px 22px; }
+
+    .timeline-list { margin: 0; padding: 0; list-style: none; }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 165px 16px 1fr;
+      gap: 13px;
+      position: relative;
+      padding: 15px 0;
+      border-bottom: 1px solid #e8ece9;
+    }
+
+    .timeline-item:last-child { border-bottom: 0; }
+
+    .timeline-item time { color: var(--navy); font-weight: 850; }
+
+    .timeline-dot {
+      width: 10px;
+      height: 10px;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: var(--panel-accent, var(--teal));
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--panel-accent, var(--teal)) 16%, transparent);
+    }
+
+    .timeline-item p { margin: 0; }
+
+    .notes-card { overflow: hidden; }
+    .notes-header { padding: 14px 18px; background: var(--panel-accent, var(--teal)); color: white; }
+    .notes-header h3 { margin: 0; font-size: 1rem; }
+    .notes-content { padding: 18px; }
+    .notes-content p { margin: 0 0 14px; }
+    .notes-content p:last-child { margin-bottom: 0; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 17px; }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--teal-soft);
+      color: #096f69;
+      font-size: 0.76rem;
+      font-weight: 850;
+    }
+
+    .chip.planned { background: var(--coral-soft); color: #bf4f39; }
+    .chip.info { background: var(--blue-soft); color: #1b668f; }
+
+    .route-callout {
+      margin-top: 17px;
+      padding: 15px 17px;
+      border-left: 5px solid var(--gold);
+      border-radius: 0 12px 12px 0;
+      background: var(--gold-soft);
+    }
+
+    .route-callout strong { color: var(--navy); }
+
+    .planning-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .planning-card { overflow: hidden; }
+    .planning-card h3 { margin: 0; padding: 15px 18px; color: white; background: var(--teal); }
+    .planning-card.outstanding h3 { background: var(--coral); }
+    .planning-list { margin: 0; padding: 8px 18px 18px; list-style: none; }
+    .planning-item { padding: 13px 0; border-bottom: 1px solid #e8ece9; }
+    .planning-item:last-child { border-bottom: 0; }
+    .planning-item strong { display: block; color: var(--navy); }
+    .planning-item span { color: var(--muted); font-size: 0.9rem; }
+
+    .priority-box {
+      margin-top: 18px;
+      padding: 18px 20px;
+      border-radius: var(--radius);
+      background: var(--navy);
+      color: white;
+    }
+
+    .priority-box h3 { margin: 0 0 7px; }
+    .priority-box p { margin: 0; color: #d2e2ea; }
+
+    .footer-note { margin-top: 26px; color: var(--muted); font-size: 0.82rem; text-align: center; }
+
+    .panel-blue { --panel-accent: var(--blue); }
+    .panel-coral { --panel-accent: var(--coral); }
+    .panel-green { --panel-accent: var(--green); }
+    .panel-teal { --panel-accent: var(--teal); }
+
+    @media (max-width: 1050px) {
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .summary-banner { grid-template-columns: repeat(2, 1fr); }
+      .day-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .hero { padding: 25px 18px 22px; }
+      .hero-top { flex-direction: column; gap: 16px; }
+      .family-badge { white-space: normal; }
+      .page-shell { padding: 24px 14px 48px; }
+      .panel-heading { align-items: flex-start; flex-direction: column; }
+      .summary-grid, .summary-banner, .planning-columns { grid-template-columns: 1fr; }
+      .timeline-item { grid-template-columns: 1fr; gap: 4px; padding-left: 20px; }
+      .timeline-dot { position: absolute; left: 0; top: 16px; }
+      .timeline-card { padding: 8px 16px; }
+    }
+
+    @media print {
+      body { background: white; font-size: 10pt; }
+      .hero { padding: 18px 24px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .route, .tabs-wrap, .print-button { display: none !important; }
+      .page-shell { max-width: none; padding: 18px 24px; }
+      .tab-panel { display: block !important; break-before: page; }
+      #summary { break-before: auto; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .day-grid, .planning-columns { grid-template-columns: 1fr; }
+      .day-card, .timeline-card, .notes-card, .planning-card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-top">
+        <div>
+          <p class="eyebrow">Family itinerary · Western Australia</p>
+          <h1>Perth, Rottnest &amp; Margaret River</h1>
+          <p class="hero-subtitle">30 December 2026 – 5 January 2027</p>
+        </div>
+        <div class="family-badge">Family of four · 2 adults · ages 8 + 4</div>
+      </div>
+      <div class="route" aria-label="Journey route">
+        <div class="route-stop"><strong>Sydney</strong><span>30 Dec</span></div>
+        <div class="route-stop"><strong>Perth</strong><span>30 Dec – 2 Jan</span></div>
+        <div class="route-stop"><strong>Rottnest</strong><span>2 Jan</span></div>
+        <div class="route-stop"><strong>Fremantle</strong><span>2 Jan</span></div>
+        <div class="route-stop"><strong>Busselton</strong><span>3 Jan</span></div>
+        <div class="route-stop"><strong>Margaret River</strong><span>3–4 Jan</span></div>
+        <div class="route-stop"><strong>Perth Airport</strong><span>4 Jan</span></div>
+        <div class="route-stop"><strong>Sydney</strong><span>5 Jan</span></div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs-wrap" aria-label="Itinerary sections">
+    <div class="tabs-bar" role="tablist" aria-label="Itinerary tabs">
+      <button class="tab-button" role="tab" id="tab-summary" aria-controls="summary" aria-selected="true" tabindex="0">Summary</button>
+      <button class="tab-button" role="tab" id="tab-wed" aria-controls="wed" aria-selected="false" tabindex="-1">Wed 30 Dec</button>
+      <button class="tab-button" role="tab" id="tab-thu" aria-controls="thu" aria-selected="false" tabindex="-1">Thu 31 Dec</button>
+      <button class="tab-button" role="tab" id="tab-fri" aria-controls="fri" aria-selected="false" tabindex="-1">Fri 1 Jan</button>
+      <button class="tab-button" role="tab" id="tab-sat" aria-controls="sat" aria-selected="false" tabindex="-1">Sat 2 Jan</button>
+      <button class="tab-button" role="tab" id="tab-sun" aria-controls="sun" aria-selected="false" tabindex="-1">Sun 3 Jan</button>
+      <button class="tab-button" role="tab" id="tab-mon" aria-controls="mon" aria-selected="false" tabindex="-1">Mon 4 Jan</button>
+      <button class="tab-button" role="tab" id="tab-tue" aria-controls="tue" aria-selected="false" tabindex="-1">Tue 5 Jan</button>
+      <button class="tab-button" role="tab" id="tab-planning" aria-controls="planning" aria-selected="false" tabindex="-1">Plan &amp; book</button>
+    </div>
+  </nav>
+
+  <main class="page-shell">
+    <section class="tab-panel" id="summary" role="tabpanel" aria-labelledby="tab-summary">
+      <div class="panel-heading">
+        <div><h2>Trip at a glance</h2><p>Select a day to open its complete schedule, practical notes and confirmed arrangements.</p></div>
+        <button class="print-button" type="button" id="print-button">Print / save PDF</button>
+      </div>
+
+      <div class="summary-grid">
+        <article class="day-card" role="button" tabindex="0" data-open-tab="wed" aria-label="Open Wednesday 30 December details">
+          <div class="day-card-header"><strong>Wednesday</strong><span>30 DEC</span></div>
+          <div class="day-card-body"><h3>Arrive + central Perth</h3><p class="stay">Overnight · Ritz-Carlton Perth</p><p>QF645, Elizabeth Quay, Kings Park and an easy first evening.</p><div class="key-time">10:35am departure · 12:25pm arrival</div></div>
+        </article>
+        <article class="day-card" role="button" tabindex="0" data-open-tab="thu" aria-label="Open Thursday 31 December details">
+          <div class="day-card-header"><strong>Thursday</strong><span>31 DEC</span></div>
+          <div class="day-card-body"><h3>Wildlife + Mint + NYE</h3><p class="stay">Overnight · Ritz-Carlton Perth</p><p>Heritage tram, Caversham Wildlife Park, Perth Mint and Elizabeth Quay celebrations.</p><div class="key-time">Trams 11:10am / 2:00pm · Mint 3:30pm</div></div>
+        </article>
+        <article class="day-card" role="button" tabindex="0" data-open-tab="fri" aria-label="Open Friday 1 January details">
+          <div class="day-card-header"><strong>Friday</strong><span>1 JAN</span></div>
+          <div class="day-card-body"><h3>Museum + heritage + move</h3><p class="stay">Overnight · Mercure Perth</p><p>WA Museum Boola Bardip, a CBD heritage walk and hotel transfer.</p><div class="key-time">Ritz late checkout · 4:00pm</div></div>
+        </article>
+        <article class="day-card" role="button" tabindex="0" data-open-tab="sat" aria-label="Open Saturday 2 January details">
+          <div class="day-card-header"><strong>Saturday</strong><span>2 JAN</span></div>
+          <div class="day-card-body"><h3>Rottnest + Fremantle sunset</h3><p class="stay">Overnight · Mercure Perth</p><p>Quokkas, Island Explorer, beaches, Gage Roads playground and sunset.</p><div class="key-time">Ferries 8:45am and 6:00pm · booked</div></div>
+        </article>
+        <article class="day-card" role="button" tabindex="0" data-open-tab="sun" aria-label="Open Sunday 3 January details">
+          <div class="day-card-header"><strong>Sunday</strong><span>3 JAN</span></div>
+          <div class="day-card-body"><h3>Jetty + estates</h3><p class="stay">Overnight · Busselton Ithaca Motel</p><p>Avis pickup, Underwater Observatory, Voyager, Leeuwin and Busselton foreshore.</p><div class="key-time">Avis 7:00am · Jetty 12:00pm · Voyager 3:00pm</div></div>
+        </article>
+        <article class="day-card" role="button" tabindex="0" data-open-tab="mon" aria-label="Open Monday 4 January details">
+          <div class="day-card-header"><strong>Monday</strong><span>4 JAN</span></div>
+          <div class="day-card-body"><h3>Wine + cave + fly</h3><p class="stay">Overnight · QF654</p><p>Vasse Felix tour and lunch, Ngilgi Cave, then direct to Perth Airport.</p><div class="key-time">T4 by 9:45pm · flight 10:55pm</div></div>
+        </article>
+        <article class="day-card" role="button" tabindex="0" data-open-tab="tue" aria-label="Open Tuesday 5 January details">
+          <div class="day-card-header"><strong>Tuesday</strong><span>5 JAN</span></div>
+          <div class="day-card-body"><h3>Home to Sydney</h3><p class="stay">Overnight · Home</p><p>Arrive in Sydney after the overnight flight from Perth.</p><div class="key-time">6:05am AEDT arrival</div></div>
+        </article>
+      </div>
+
+      <div class="summary-banner">
+        <div class="fact"><span>Confirmed stays</span><strong>Ritz · Mercure · Busselton Ithaca</strong></div>
+        <div class="fact"><span>Confirmed transport</span><strong>Flights · Rottnest Express · Avis</strong></div>
+        <div class="fact"><span>Family highlight</span><strong>Quokkas, wildlife and beaches</strong></div>
+        <div class="fact"><span>Final airport target</span><strong>Inside T4 by 9:45pm</strong></div>
+      </div>
+      <p class="footer-note">All times are local. Reconfirm holiday openings and 2027 public-transport timetables closer to travel.</p>
+    </section>
+
+    <section class="tab-panel panel-blue" id="wed" role="tabpanel" aria-labelledby="tab-wed" hidden>
+      <div class="panel-heading"><div><h2>Wednesday 30 December</h2><p>Arrival and central Perth</p></div></div>
+      <div class="chips"><span class="chip">Ritz-Carlton confirmed</span><span class="chip">QF645 confirmed</span><span class="chip info">Two double beds</span></div>
+      <div class="day-grid">
+        <div class="timeline-card"><ol class="timeline-list">
+          <li class="timeline-item"><time>10:35am AEDT</time><span class="timeline-dot"></span><p>QF645 departs Sydney.</p></li>
+          <li class="timeline-item"><time>12:25pm AWST</time><span class="timeline-dot"></span><p>Arrive at Perth Airport Terminal 3.</p></li>
+          <li class="timeline-item"><time>1:30–2:15pm</time><span class="timeline-dot"></span><p>Transfer to The Ritz-Carlton; leave luggage if the room is not ready.</p></li>
+          <li class="timeline-item"><time>3:00pm</time><span class="timeline-dot"></span><p>Standard hotel check-in.</p></li>
+          <li class="timeline-item"><time>3:15–4:15pm</time><span class="timeline-dot"></span><p>Elizabeth Quay promenade, playground and waterfront.</p></li>
+          <li class="timeline-item"><time>4:30–6:30pm</time><span class="timeline-dot"></span><p>Kings Park: city lookout, War Memorial and a short Botanic Garden walk.</p></li>
+          <li class="timeline-item"><time>Evening</time><span class="timeline-dot"></span><p>Dinner near Elizabeth Quay and an early night.</p></li>
+        </ol></div>
+        <aside class="notes-card"><div class="notes-header"><h3>Accommodation notes</h3></div><div class="notes-content">
+          <p>The Ritz booking is confirmed for 30 December to 1 January in a room with two double beds.</p>
+          <p><strong>Action:</strong> the original confirmation records only one adult. Add the second adult and both children to the reservation.</p>
+          <p>The separately arranged 4:00pm late checkout on 1 January is not shown in the original confirmation; retain it in writing.</p>
+        </div></aside>
+      </div>
+    </section>
+
+    <section class="tab-panel panel-coral" id="thu" role="tabpanel" aria-labelledby="tab-thu" hidden>
+      <div class="panel-heading"><div><h2>Thursday 31 December</h2><p>Caversham Wildlife Park, Perth Mint and New Year’s Eve</p></div></div>
+      <div class="chips"><span class="chip">Ritz-Carlton confirmed</span><span class="chip planned">Caversham tickets to arrange</span><span class="chip planned">Perth Mint 3:30pm to book</span><span class="chip info">Public transport day</span></div>
+      <div class="day-grid">
+        <div class="timeline-card"><ol class="timeline-list">
+          <li class="timeline-item"><time>7:45–8:30am</time><span class="timeline-dot"></span><p>Breakfast at the Ritz.</p></li>
+          <li class="timeline-item"><time>Around 9:30am</time><span class="timeline-dot"></span><p>Leave for Elizabeth Quay or Perth Station.</p></li>
+          <li class="timeline-item"><time>Morning</time><span class="timeline-dot"></span><p>Train through Perth to Whiteman Park Station on the Ellenbrook Line.</p></li>
+          <li class="timeline-item"><time>By 10:55am</time><span class="timeline-dot"></span><p>Be at the heritage-tram stop outside Whiteman Park Station.</p></li>
+          <li class="timeline-item"><time>11:10am</time><span class="timeline-dot"></span><p>Heritage tram departs Whiteman Park Station.</p></li>
+          <li class="timeline-item"><time>Around 11:40am</time><span class="timeline-dot"></span><p>Arrive at the Village; take the short internal walk to Caversham.</p></li>
+          <li class="timeline-item"><time>11:45am–1:50pm</time><span class="timeline-dot"></span><p>Focused Caversham Wildlife Park visit. Prioritise kangaroos, koalas, the Farm Show and a scheduled animal encounter.</p></li>
+          <li class="timeline-item"><time>By 1:50pm</time><span class="timeline-dot"></span><p>Leave Caversham and return to the Village tram stop.</p></li>
+          <li class="timeline-item"><time>2:00pm</time><span class="timeline-dot"></span><p>Heritage tram departs the Village.</p></li>
+          <li class="timeline-item"><time>Around 2:10pm</time><span class="timeline-dot"></span><p>Reach Whiteman Park Station and take the train toward central Perth.</p></li>
+          <li class="timeline-item"><time>2:45–3:05pm</time><span class="timeline-dot"></span><p>Reach central Perth.</p></li>
+          <li class="timeline-item"><time>By 3:15pm</time><span class="timeline-dot"></span><p>Use the Red CAT or other public transport to the Perth Mint.</p></li>
+          <li class="timeline-item"><time>3:30–4:30pm</time><span class="timeline-dot"></span><p>Perth Mint Gold Tour.</p></li>
+          <li class="timeline-item"><time>4:45–6:15pm</time><span class="timeline-dot"></span><p>Return to the Ritz, rest, shower and prepare for the evening.</p></li>
+          <li class="timeline-item"><time>Around 6:15pm</time><span class="timeline-dot"></span><p>Early dinner.</p></li>
+          <li class="timeline-item"><time>Evening</time><span class="timeline-dot"></span><p>City of Perth New Year’s Eve activities around Elizabeth Quay.</p></li>
+        </ol></div>
+        <aside class="notes-card"><div class="notes-header"><h3>Critical connections</h3></div><div class="notes-content">
+          <p>This is the most schedule-sensitive day. The Caversham–Mint sequence depends on the heritage tram operating and catching both the 11:10am station tram and 2:00pm Village tram.</p>
+          <p>The Caversham visit is a two-hour highlights visit rather than the full three-hour experience.</p>
+          <p>Recheck the exact 31 December train and tram schedules. The volunteer tram may be suspended during extreme heat or fire bans.</p>
+          <p>The Mint is closed on New Year’s Day, so the Gold Tour must remain on 31 December.</p>
+        </div></aside>
+      </div>
+    </section>
+
+    <section class="tab-panel panel-green" id="fri" role="tabpanel" aria-labelledby="tab-fri" hidden>
+      <div class="panel-heading"><div><h2>Friday 1 January</h2><p>WA Museum, CBD heritage walk and hotel change</p></div></div>
+      <div class="chips"><span class="chip">Ritz late checkout 4:00pm</span><span class="chip">Mercure confirmed</span><span class="chip info">New Year’s Day</span></div>
+      <div class="day-grid">
+        <div class="timeline-card"><ol class="timeline-list">
+          <li class="timeline-item"><time>Morning</time><span class="timeline-dot"></span><p>Sleep in and have a late breakfast.</p></li>
+          <li class="timeline-item"><time>Around 10:45am</time><span class="timeline-dot"></span><p>Travel by CAT or train toward Perth Cultural Centre.</p></li>
+          <li class="timeline-item"><time>11:00am–1:00pm</time><span class="timeline-dot"></span><p>WA Museum Boola Bardip.</p></li>
+          <li class="timeline-item"><time>1:00–1:45pm</time><span class="timeline-dot"></span><p>Lunch near the Cultural Centre or Northbridge.</p></li>
+          <li class="timeline-item"><time>1:45–3:15pm</time><span class="timeline-dot"></span><p>Relaxed heritage walk back toward Elizabeth Quay.</p></li>
+          <li class="timeline-item"><time>3:15–3:50pm</time><span class="timeline-dot"></span><p>Final packing and room check.</p></li>
+          <li class="timeline-item"><time>4:00pm</time><span class="timeline-dot"></span><p>Check out of the Ritz.</p></li>
+          <li class="timeline-item"><time>4:00–4:30pm</time><span class="timeline-dot"></span><p>Transfer to Mercure Perth and check in.</p></li>
+          <li class="timeline-item"><time>Evening</time><span class="timeline-dot"></span><p>Simple dinner and prepare swimwear, hats, sunscreen, snacks and ferry QR codes for Rottnest.</p></li>
+        </ol></div>
+        <aside class="notes-card"><div class="notes-header"><h3>Heritage walk</h3></div><div class="notes-content">
+          <p><strong>Suggested route:</strong> Perth Cultural Centre → Perth Town Hall → London Court → St George’s Cathedral → State Buildings → Supreme Court Gardens → Elizabeth Quay.</p>
+          <p>The museum currently opens on New Year’s Day from 9:30am to 5:00pm; reconfirm holiday hours closer to travel.</p>
+          <p>Mercure is confirmed for 1–3 January, with two double beds for two adults and two children.</p>
+        </div></aside>
+      </div>
+    </section>
+
+    <section class="tab-panel panel-teal" id="sat" role="tabpanel" aria-labelledby="tab-sat" hidden>
+      <div class="panel-heading"><div><h2>Saturday 2 January</h2><p>Rottnest Island and Fremantle sunset</p></div></div>
+      <div class="chips"><span class="chip">Rottnest Express booked + paid</span><span class="chip">Mercure confirmed</span><span class="chip info">Family of four</span></div>
+      <div class="day-grid">
+        <div class="timeline-card"><ol class="timeline-list">
+          <li class="timeline-item"><time>7:15–7:50am</time><span class="timeline-dot"></span><p>Breakfast and prepare swimwear, hats, sunscreen, water and snacks.</p></li>
+          <li class="timeline-item"><time>By 8:05–8:10am</time><span class="timeline-dot"></span><p>Wait at Tourist Bus Stop 471 on Hay Street.</p></li>
+          <li class="timeline-item"><time>8:19am</time><span class="timeline-dot"></span><p>Confirmed Rottnest Express hotel-area pickup.</p></li>
+          <li class="timeline-item"><time>8:45–10:15am</time><span class="timeline-dot"></span><p>Direct ferry from Barrack Street Jetty to Rottnest Island.</p></li>
+          <li class="timeline-item"><time>10:15–10:45am</time><span class="timeline-dot"></span><p>Thomson Bay orientation, toilets and quokkas.</p></li>
+          <li class="timeline-item"><time>10:45am–1:30pm</time><span class="timeline-dot"></span><p>Island Explorer toward Parker Point and Little Salmon Bay; casual or packed lunch around midday.</p></li>
+          <li class="timeline-item"><time>1:30–3:30pm</time><span class="timeline-dot"></span><p>Additional bays or lighthouse area, depending on energy.</p></li>
+          <li class="timeline-item"><time>3:30–4:30pm</time><span class="timeline-dot"></span><p>The Basin or Pinky Beach.</p></li>
+          <li class="timeline-item"><time>4:30–5:25pm</time><span class="timeline-dot"></span><p>Return toward Thomson Bay; snack, shops and final quokka viewing.</p></li>
+          <li class="timeline-item"><time>By 5:30pm</time><span class="timeline-dot"></span><p>Ready at the ferry terminal.</p></li>
+          <li class="timeline-item"><time>6:00–6:30pm</time><span class="timeline-dot"></span><p>Direct ferry to Fremantle B Shed.</p></li>
+          <li class="timeline-item"><time>6:40–7:15pm</time><span class="timeline-dot"></span><p>Gage Roads: secure a table and use the playground while it is light.</p></li>
+          <li class="timeline-item"><time>7:20–7:35pm</time><span class="timeline-dot"></span><p>Waterfront sunset.</p></li>
+          <li class="timeline-item"><time>7:35–8:35pm</time><span class="timeline-dot"></span><p>Food and drinks at Gage Roads.</p></li>
+          <li class="timeline-item"><time>Around 8:40pm</time><span class="timeline-dot"></span><p>Walk to Fremantle Station; train to Perth and return to Mercure around 9:30–10:00pm.</p></li>
+        </ol></div>
+        <aside class="notes-card"><div class="notes-header"><h3>Island pacing</h3></div><div class="notes-content">
+          <p>Keep the final hour close to Thomson Bay so a delayed bus does not jeopardise the 6:00pm ferry.</p>
+          <p>Have the ferry QR codes accessible offline. The outbound includes the 8:19am Hay Street pickup.</p>
+          <p>At Gage Roads, playground comes first, then sunset, then food and drinks.</p>
+        </div></aside>
+      </div>
+    </section>
+
+    <section class="tab-panel panel-blue" id="sun" role="tabpanel" aria-labelledby="tab-sun" hidden>
+      <div class="panel-heading"><div><h2>Sunday 3 January</h2><p>Rental car, Busselton Jetty and Margaret River estates</p></div></div>
+      <div class="chips"><span class="chip">Avis confirmed · 7:00am</span><span class="chip">Busselton Ithaca confirmed</span><span class="chip planned">Experiences to book</span></div>
+      <div class="day-grid">
+        <div class="timeline-card"><ol class="timeline-list">
+          <li class="timeline-item"><time>5:50–6:00am</time><span class="timeline-dot"></span><p>One adult leaves Mercure alone for Perth Airport.</p></li>
+          <li class="timeline-item"><time>By 6:45am</time><span class="timeline-dot"></span><p>Arrive at Avis T3/T4.</p></li>
+          <li class="timeline-item"><time>7:00am</time><span class="timeline-dot"></span><p>Collect and inspect the rental car.</p></li>
+          <li class="timeline-item"><time>7:20–8:10am</time><span class="timeline-dot"></span><p>Return to Mercure, load the family, child seat, luggage and YOYO, then depart for Busselton.</p></li>
+          <li class="timeline-item"><time>10:40–11:00am</time><span class="timeline-dot"></span><p>Arrive at Busselton Foreshore; find parking and have a substantial snack or early lunch.</p></li>
+          <li class="timeline-item"><time>11:25–11:45am</time><span class="timeline-dot"></span><p>Toilets, sunscreen and check in for the jetty experience.</p></li>
+          <li class="timeline-item"><time>12:00–1:45pm</time><span class="timeline-dot"></span><p>Underwater Observatory and return train.</p></li>
+          <li class="timeline-item"><time>By 2:00pm</time><span class="timeline-dot"></span><p>Depart Busselton for Voyager Estate.</p></li>
+          <li class="timeline-item"><time>3:00–4:00pm</time><span class="timeline-dot"></span><p>Savour Voyager experience.</p></li>
+          <li class="timeline-item"><time>4:10–4:40/4:45pm</time><span class="timeline-dot"></span><p>Standard Leeuwin Estate Cellar Door tasting. One adult remains the designated driver.</p></li>
+          <li class="timeline-item"><time>By 4:50pm</time><span class="timeline-dot"></span><p>Depart Leeuwin for Busselton.</p></li>
+          <li class="timeline-item"><time>5:35–5:55pm</time><span class="timeline-dot"></span><p>Check into Busselton Ithaca Motel.</p></li>
+          <li class="timeline-item"><time>6:10–7:40pm</time><span class="timeline-dot"></span><p>Sea Play playground, foreshore and optional short jetty walk.</p></li>
+          <li class="timeline-item"><time>Around 8:00pm</time><span class="timeline-dot"></span><p>Dinner at Shelter Brewing or another late-opening venue.</p></li>
+        </ol></div>
+        <aside class="notes-card"><div class="notes-header"><h3>Car + motel notes</h3></div><div class="notes-content">
+          <p>Avis is confirmed for a Suzuki Swift or similar: three-door automatic, five passengers, two bags and a full-to-full fuel policy.</p>
+          <p>At pickup, confirm the suitcase, smaller bags and YOYO fit below the parcel shelf and rear-seat access works with the children.</p>
+          <p>Keep luggage concealed in the locked car at the jetty; carry valuables, medicines and electronics.</p>
+          <p>Motel check-in ends at 6:00pm. Arrange late-arrival instructions as a backup.</p>
+        </div></aside>
+      </div>
+    </section>
+
+    <section class="tab-panel panel-coral" id="mon" role="tabpanel" aria-labelledby="tab-mon" hidden>
+      <div class="panel-heading"><div><h2>Monday 4 January</h2><p>Vasse Felix, Ngilgi Cave and flight</p></div></div>
+      <div class="chips"><span class="chip">Avis confirmed</span><span class="chip">QF654 confirmed</span><span class="chip planned">Tour, lunch + cave to book</span></div>
+      <div class="day-grid">
+        <div class="timeline-card"><ol class="timeline-list">
+          <li class="timeline-item"><time>7:45–8:30am</time><span class="timeline-dot"></span><p>Breakfast, final packing and checkout.</p></li>
+          <li class="timeline-item"><time>8:30–9:05am</time><span class="timeline-dot"></span><p>Optional brief foreshore stop or slower breakfast.</p></li>
+          <li class="timeline-item"><time>By 9:15am</time><span class="timeline-dot"></span><p>Depart Busselton.</p></li>
+          <li class="timeline-item"><time>Around 10:00am</time><span class="timeline-dot"></span><p>Arrive at Vasse Felix and check in.</p></li>
+          <li class="timeline-item"><time>10:30am–12:00pm</time><span class="timeline-dot"></span><p>Vasse Felix Original Tour and tasting.</p></li>
+          <li class="timeline-item"><time>12:15–2:15pm</time><span class="timeline-dot"></span><p>Lunch at Vasse Felix Restaurant.</p></li>
+          <li class="timeline-item"><time>2:15–2:40pm</time><span class="timeline-dot"></span><p>Gallery, Vault, grounds and toilets.</p></li>
+          <li class="timeline-item"><time>By 2:45pm</time><span class="timeline-dot"></span><p>Depart for Ngilgi Cave.</p></li>
+          <li class="timeline-item"><time>Around 3:15pm</time><span class="timeline-dot"></span><p>Arrive and check in.</p></li>
+          <li class="timeline-item"><time>3:30–5:00pm</time><span class="timeline-dot"></span><p>Ngilgi Cave Ancient Lands Experience.</p></li>
+          <li class="timeline-item"><time>5:00–5:20pm</time><span class="timeline-dot"></span><p>Toilets, water and brief nature-play time.</p></li>
+          <li class="timeline-item"><time>5:20–5:30pm</time><span class="timeline-dot"></span><p>Drive directly to Perth Airport; do not add another stop.</p></li>
+          <li class="timeline-item"><time>8:25–8:45pm</time><span class="timeline-dot"></span><p>Reach the airport area and refuel.</p></li>
+          <li class="timeline-item"><time>9:05–9:20pm</time><span class="timeline-dot"></span><p>Return the car to Avis at T3/T4.</p></li>
+          <li class="timeline-item"><time>9:20–9:40pm</time><span class="timeline-dot"></span><p>Walk into Terminal 4.</p></li>
+          <li class="timeline-item"><time>9:45pm latest</time><span class="timeline-dot"></span><p>Be inside T4.</p></li>
+          <li class="timeline-item"><time>10:55pm</time><span class="timeline-dot"></span><p>QF654 departs Perth.</p></li>
+        </ol></div>
+        <aside class="notes-card"><div class="notes-header"><h3>Airport plan</h3></div><div class="notes-content">
+          <p>There is no additional Busselton Jetty tour this morning.</p>
+          <p>Although the Avis contract runs until 10:30pm, return the car around 9:15pm so the family reaches bag drop and security comfortably.</p>
+          <p>Return the car full. Keep the final drive direct after Ngilgi Cave.</p>
+        </div></aside>
+      </div>
+    </section>
+
+    <section class="tab-panel panel-green" id="tue" role="tabpanel" aria-labelledby="tab-tue" hidden>
+      <div class="panel-heading"><div><h2>Tuesday 5 January</h2><p>Arrival home</p></div></div>
+      <div class="chips"><span class="chip">QF654 confirmed</span></div>
+      <div class="day-grid">
+        <div class="timeline-card"><ol class="timeline-list">
+          <li class="timeline-item"><time>Overnight</time><span class="timeline-dot"></span><p>QF654 flies from Perth to Sydney.</p></li>
+          <li class="timeline-item"><time>6:05am AEDT</time><span class="timeline-dot"></span><p>Arrive in Sydney.</p></li>
+        </ol></div>
+        <aside class="notes-card"><div class="notes-header"><h3>Hand luggage</h3></div><div class="notes-content"><p>Keep medicines, valuables and key booking confirmations with the family during the overnight flight.</p></div></aside>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="planning" role="tabpanel" aria-labelledby="tab-planning" hidden>
+      <div class="panel-heading"><div><h2>Outstanding planning &amp; bookings</h2><p>Confirmed foundations on the left; remaining actions and timetable checks on the right.</p></div></div>
+      <div class="planning-columns">
+        <div class="planning-card">
+          <h3>Confirmed</h3>
+          <ul class="planning-list">
+            <li class="planning-item"><strong>Flights</strong><span>QF645 to Perth and QF654 home.</span></li>
+            <li class="planning-item"><strong>Ritz-Carlton Perth</strong><span>30 Dec–1 Jan; correct guest count and retain written 4:00pm checkout confirmation.</span></li>
+            <li class="planning-item"><strong>Mercure Perth</strong><span>1–3 January; two double beds.</span></li>
+            <li class="planning-item"><strong>Rottnest Express</strong><span>Outbound and return booked and paid; Hay Street pickup included.</span></li>
+            <li class="planning-item"><strong>Avis rental car</strong><span>7:00am pickup on 3 January; booked return 10:30pm on 4 January.</span></li>
+            <li class="planning-item"><strong>Busselton Ithaca Motel</strong><span>One-night Standard Quadruple Room; check-in ends at 6:00pm.</span></li>
+          </ul>
+        </div>
+        <div class="planning-card outstanding">
+          <h3>Arrange or reconfirm</h3>
+          <ul class="planning-list">
+            <li class="planning-item"><strong>Caversham Wildlife Park</strong><span>Arrange entry for the focused 11:45am–1:50pm visit.</span></li>
+            <li class="planning-item"><strong>Whiteman Park heritage tram</strong><span>Reconfirm the 11:10am station departure and 2:00pm Village departure, including heat/fire-ban operations.</span></li>
+            <li class="planning-item"><strong>Perth Mint Gold Tour</strong><span>Book 3:30pm on 31 December; reconfirm the tight transport connection.</span></li>
+            <li class="planning-item"><strong>Perth NYE program</strong><span>Check the official 2026–27 family event and fireworks schedule.</span></li>
+            <li class="planning-item"><strong>Busselton Underwater Observatory</strong><span>Book 12:00pm on 3 January.</span></li>
+            <li class="planning-item"><strong>Savour Voyager</strong><span>Book 3:00pm on 3 January and confirm children may accompany the adults.</span></li>
+            <li class="planning-item"><strong>Leeuwin Estate</strong><span>Confirm a standard walk-in tasting can start around 4:10pm.</span></li>
+            <li class="planning-item"><strong>Vasse Felix</strong><span>Book the 10:30am Original Tour and 12:15pm lunch; confirm children and a simple meal option.</span></li>
+            <li class="planning-item"><strong>Ngilgi Cave</strong><span>Book the 3:30pm Ancient Lands Experience.</span></li>
+            <li class="planning-item"><strong>2027 transport + holiday hours</strong><span>Recheck trains, CAT services, restaurant openings and attraction hours close to travel.</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="priority-box"><h3>Highest-risk connection</h3><p>31 December is the most schedule-sensitive day. The Caversham–Mint combination depends on the heritage tram operating and the family catching both the 11:10am and 2:00pm tram services.</p></div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+      const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
+
+      function activateTab(id, updateHash = true) {
+        const targetTab = tabs.find(tab => tab.getAttribute('aria-controls') === id);
+        const targetPanel = document.getElementById(id);
+        if (!targetTab || !targetPanel) return;
+
+        tabs.forEach(tab => {
+          const active = tab === targetTab;
+          tab.setAttribute('aria-selected', String(active));
+          tab.tabIndex = active ? 0 : -1;
+        });
+
+        panels.forEach(panel => { panel.hidden = panel !== targetPanel; });
+        targetTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        window.scrollTo({ top: document.querySelector('.tabs-wrap').offsetTop, behavior: 'smooth' });
+        if (updateHash) history.replaceState(null, '', `#${id}`);
+      }
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => activateTab(tab.getAttribute('aria-controls')));
+        tab.addEventListener('keydown', event => {
+          let nextIndex = null;
+          if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+          if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+          if (event.key === 'Home') nextIndex = 0;
+          if (event.key === 'End') nextIndex = tabs.length - 1;
+          if (nextIndex !== null) {
+            event.preventDefault();
+            const next = tabs[nextIndex];
+            activateTab(next.getAttribute('aria-controls'));
+            next.focus();
+          }
+        });
+      });
+
+      document.querySelectorAll('[data-open-tab]').forEach(card => {
+        card.addEventListener('click', () => activateTab(card.dataset.openTab));
+        card.addEventListener('keydown', event => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            activateTab(card.dataset.openTab);
+          }
+        });
+      });
+
+      document.getElementById('print-button').addEventListener('click', () => window.print());
+
+      const initial = location.hash.slice(1);
+      if (panels.some(panel => panel.id === initial)) activateTab(initial, false);
+    })();
+  </script>
+</body>
+</html>
