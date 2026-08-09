@@ -202,7 +202,14 @@
 
     .panel-heading p { max-width: 700px; margin: 8px 0 0; color: var(--muted); }
 
-    .print-button {
+    .summary-actions {
+      display: flex;
+      flex: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .print-button, .infographic-link {
       flex: none;
       border: 0;
       border-radius: 12px;
@@ -211,7 +218,10 @@
       color: white;
       cursor: pointer;
       font-weight: 800;
+      text-decoration: none;
     }
+
+    .infographic-link { background: var(--navy); }
 
     .summary-grid {
       display: grid;
@@ -393,6 +403,7 @@
       .family-badge { white-space: normal; }
       .page-shell { padding: 24px 14px 48px; }
       .panel-heading { align-items: flex-start; flex-direction: column; }
+      .summary-actions { width: 100%; flex-wrap: wrap; }
       .summary-grid, .summary-banner, .planning-columns { grid-template-columns: 1fr; }
       .timeline-item { grid-template-columns: 1fr; gap: 4px; padding-left: 20px; }
       .timeline-dot { position: absolute; left: 0; top: 16px; }
@@ -402,7 +413,7 @@
     @media print {
       body { background: white; font-size: 10pt; }
       .hero { padding: 18px 24px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-      .route, .tabs-wrap, .print-button { display: none !important; }
+      .route, .tabs-wrap, .summary-actions { display: none !important; }
       .page-shell { max-width: none; padding: 18px 24px; }
       .tab-panel { display: block !important; break-before: page; }
       #summary { break-before: auto; }
@@ -454,7 +465,10 @@
     <section class="tab-panel" id="summary" role="tabpanel" aria-labelledby="tab-summary">
       <div class="panel-heading">
         <div><h2>Trip at a glance</h2><p>Select a day to open its complete schedule, practical notes and confirmed arrangements.</p></div>
-        <button class="print-button" type="button" id="print-button">Print / save PDF</button>
+        <div class="summary-actions">
+          <a class="infographic-link" href="perth-family-itinerary-infographic.png" target="_blank" rel="noopener">View infographic</a>
+          <button class="print-button" type="button" id="print-button">Print / save PDF</button>
+        </div>
       </div>
 
       <div class="summary-grid">
@@ -480,7 +494,7 @@
         </article>
         <article class="day-card" role="button" tabindex="0" data-open-tab="mon" aria-label="Open Monday 4 January details">
           <div class="day-card-header"><strong>Monday</strong><span>4 JAN</span></div>
-          <div class="day-card-body"><h3>Wine + cave + fly</h3><p class="stay">Overnight · QF654</p><p>Confirmed Vasse Felix Original Tour, planned lunch, Ngilgi Cave, then direct to Perth Airport.</p><div class="key-time">Vasse Felix 10:30am · T4 by 9:45pm</div></div>
+          <div class="day-card-body"><h3>Wine + cave + fly</h3><p class="stay">Overnight · QF654</p><p>Confirmed Vasse Felix Original Tour and lunch, Ngilgi Cave, then direct to Perth Airport.</p><div class="key-time">Tour 10:30am · lunch 12:00pm</div></div>
         </article>
         <article class="day-card" role="button" tabindex="0" data-open-tab="tue" aria-label="Open Tuesday 5 January details">
           <div class="day-card-header"><strong>Tuesday</strong><span>5 JAN</span></div>
@@ -491,7 +505,7 @@
       <div class="summary-banner">
         <div class="fact"><span>Confirmed stays</span><strong>Ritz · Mercure · Busselton Ithaca</strong></div>
         <div class="fact"><span>Confirmed transport</span><strong>Flights · Rottnest Express · Avis</strong></div>
-        <div class="fact"><span>Confirmed experiences</span><strong>Rottnest · Jetty · Voyager · Vasse Felix</strong></div>
+        <div class="fact"><span>Confirmed experiences</span><strong>Jetty · Voyager · Vasse tour + lunch</strong></div>
         <div class="fact"><span>Final airport target</span><strong>Inside T4 by 9:45pm</strong></div>
       </div>
       <p class="footer-note">All times are local. Reconfirm holiday openings and 2027 public-transport timetables closer to travel.</p>
@@ -614,8 +628,8 @@
           <li class="timeline-item"><time>11:25–11:45am</time><span class="timeline-dot"></span><p>Toilets, sunscreen and check in at the blue Interpretive Centre buildings by 11:45am.</p></li>
           <li class="timeline-item"><time>12:00–1:45pm</time><span class="timeline-dot"></span><p>Confirmed Underwater Observatory Tour and return train for two adults and children aged 8 and 4.</p></li>
           <li class="timeline-item"><time>By 2:00pm</time><span class="timeline-dot"></span><p>Depart Busselton for Voyager Estate.</p></li>
-          <li class="timeline-item"><time>3:00–3:45pm</time><span class="timeline-dot"></span><p>Confirmed Savour Voyager tasting for two adults, with paired snacks. This is an 18+ Wine Room experience; child-supervision arrangements must be settled before travel.</p></li>
-          <li class="timeline-item"><time>4:00–4:35pm</time><span class="timeline-dot"></span><p>Optional standard Leeuwin Estate Cellar Door tasting, subject to the family supervision and designated-driver plan.</p></li>
+          <li class="timeline-item"><time>3:00–3:45pm</time><span class="timeline-dot"></span><p>Confirmed Savour Voyager tasting for two adults, with paired snacks. The reservation records both children accompanying the adults.</p></li>
+          <li class="timeline-item"><time>4:00–4:35pm</time><span class="timeline-dot"></span><p>Optional standard Leeuwin Estate Cellar Door tasting, retaining a sober designated driver.</p></li>
           <li class="timeline-item"><time>By 4:40pm</time><span class="timeline-dot"></span><p>Depart Leeuwin for Busselton.</p></li>
           <li class="timeline-item"><time>5:35–5:55pm</time><span class="timeline-dot"></span><p>Check into Busselton Ithaca Motel.</p></li>
           <li class="timeline-item"><time>6:10–7:40pm</time><span class="timeline-dot"></span><p>Sea Play playground, foreshore and optional short jetty walk.</p></li>
@@ -625,7 +639,7 @@
           <p>Avis is confirmed for a Suzuki Swift or similar: three-door automatic, five passengers, two bags and a full-to-full fuel policy.</p>
           <p>At pickup, confirm the suitcase, smaller bags and YOYO fit below the parcel shelf and rear-seat access works with the children.</p>
           <p>The jetty allows essential personal items only and no prams, including compact folding models. Keep luggage concealed in the locked car and carry only a small day bag with valuables, medicines and electronics.</p>
-          <p><strong>Action:</strong> Voyager is booked for two adults and explicitly 18+. Confirm childcare or a split-attendance arrangement; complete the pre-visit questionnaire and retain a sober designated driver.</p>
+          <p>The Voyager reservation records both children accompanying the adults. The tasting is for the adults only; complete the pre-visit questionnaire and retain a sober designated driver.</p>
           <p>Motel check-in ends at 6:00pm. Arrange late-arrival instructions as a backup.</p>
         </div></aside>
       </div>
@@ -633,7 +647,7 @@
 
     <section class="tab-panel panel-coral" id="mon" role="tabpanel" aria-labelledby="tab-mon" hidden>
       <div class="panel-heading"><div><h2>Monday 4 January</h2><p>Vasse Felix, Ngilgi Cave and flight</p></div></div>
-      <div class="chips"><span class="chip">Avis confirmed</span><span class="chip">QF654 confirmed</span><span class="chip">Vasse Felix booked · 10:30am</span><span class="chip planned">Lunch + cave to book</span></div>
+      <div class="chips"><span class="chip">Avis confirmed</span><span class="chip">QF654 confirmed</span><span class="chip">Vasse Felix tour · 10:30am</span><span class="chip">Vasse Felix lunch · 12:00pm</span><span class="chip planned">Cave to book</span></div>
       <div class="day-grid">
         <div class="timeline-card"><ol class="timeline-list">
           <li class="timeline-item"><time>7:45–8:30am</time><span class="timeline-dot"></span><p>Breakfast, final packing and checkout.</p></li>
@@ -641,9 +655,9 @@
           <li class="timeline-item"><time>By 9:15am</time><span class="timeline-dot"></span><p>Depart Busselton.</p></li>
           <li class="timeline-item"><time>Around 10:00am</time><span class="timeline-dot"></span><p>Arrive at Vasse Felix; explore briefly and check in with the Cellar Door team by 10:25am.</p></li>
           <li class="timeline-item"><time>10:30am–12:00pm</time><span class="timeline-dot"></span><p>Confirmed Vasse Felix Original Tour for two adults and two children.</p></li>
-          <li class="timeline-item"><time>12:15–2:15pm</time><span class="timeline-dot"></span><p>Lunch at Vasse Felix Restaurant.</p></li>
-          <li class="timeline-item"><time>2:15–2:40pm</time><span class="timeline-dot"></span><p>Gallery, Vault, grounds and toilets.</p></li>
-          <li class="timeline-item"><time>By 2:45pm</time><span class="timeline-dot"></span><p>Depart for Ngilgi Cave.</p></li>
+          <li class="timeline-item"><time>12:00–2:00pm</time><span class="timeline-dot"></span><p>Confirmed Vasse Felix Restaurant lunch for four guests in Main Dining. Move directly from the tour to the restaurant.</p></li>
+          <li class="timeline-item"><time>2:00–2:25pm</time><span class="timeline-dot"></span><p>Gallery, Vault, grounds and toilets.</p></li>
+          <li class="timeline-item"><time>By 2:30pm</time><span class="timeline-dot"></span><p>Depart for Ngilgi Cave.</p></li>
           <li class="timeline-item"><time>Around 3:15pm</time><span class="timeline-dot"></span><p>Arrive and check in.</p></li>
           <li class="timeline-item"><time>3:30–5:00pm</time><span class="timeline-dot"></span><p>Ngilgi Cave Ancient Lands Experience.</p></li>
           <li class="timeline-item"><time>5:00–5:20pm</time><span class="timeline-dot"></span><p>Toilets, water and brief nature-play time.</p></li>
@@ -657,7 +671,7 @@
         <aside class="notes-card"><div class="notes-header"><h3>Airport plan</h3></div><div class="notes-content">
           <p>There is no additional Busselton Jetty tour this morning.</p>
           <p>The Vasse Felix tour includes an outdoor vineyard portion. Wear comfortable, weather-appropriate shoes and do not wear footwear or clothing used in any vineyard during the preceding seven days.</p>
-          <p>The 12:15pm Vasse Felix Restaurant lunch remains to be booked separately.</p>
+          <p>The Vasse Felix Restaurant reservation is confirmed for four guests at 12:00pm in Main Dining. The tour and lunch are back-to-back, so tell the Cellar Door team about the lunch booking at check-in.</p>
           <p>Although the Avis contract runs until 10:30pm, return the car around 9:15pm so the family reaches bag drop and security comfortably.</p>
           <p>Return the car full. Keep the final drive direct after Ngilgi Cave.</p>
         </div></aside>
@@ -689,8 +703,9 @@
             <li class="planning-item"><strong>Avis rental car</strong><span>7:00am pickup on 3 January; booked return 10:30pm on 4 January.</span></li>
             <li class="planning-item"><strong>Busselton Ithaca Motel</strong><span>One-night Standard Quadruple Room; check-in ends at 6:00pm.</span></li>
             <li class="planning-item"><strong>Busselton Underwater Observatory</strong><span>12:00–1:45pm on 3 January; two adults and two children.</span></li>
-            <li class="planning-item"><strong>Savour Voyager</strong><span>3:00pm on 3 January; two-adult 18+ Wine Room tasting.</span></li>
+            <li class="planning-item"><strong>Savour Voyager</strong><span>3:00pm on 3 January; tasting for two adults with both children accompanying.</span></li>
             <li class="planning-item"><strong>Vasse Felix Original Tour</strong><span>10:30am on 4 January; two adults and two children.</span></li>
+            <li class="planning-item"><strong>Vasse Felix Restaurant</strong><span>12:00pm on 4 January; Main Dining reservation for four guests.</span></li>
           </ul>
         </div>
         <div class="planning-card outstanding">
@@ -700,9 +715,7 @@
             <li class="planning-item"><strong>Whiteman Park heritage tram</strong><span>Reconfirm the 11:10am station departure and 2:00pm Village departure, including heat/fire-ban operations.</span></li>
             <li class="planning-item"><strong>Perth Mint Gold Tour</strong><span>Book 3:30pm on 31 December; reconfirm the tight transport connection.</span></li>
             <li class="planning-item"><strong>Perth NYE program</strong><span>Check the official 2026–27 family event and fireworks schedule.</span></li>
-            <li class="planning-item"><strong>Savour Voyager family logistics</strong><span>Children cannot attend the 18+ tasting. Confirm childcare or split attendance, complete the pre-visit questionnaire and retain a sober driver.</span></li>
-            <li class="planning-item"><strong>Leeuwin Estate</strong><span>Confirm a standard walk-in tasting can start around 4:10pm.</span></li>
-            <li class="planning-item"><strong>Vasse Felix Restaurant</strong><span>Book the planned 12:15pm family lunch and confirm a simple children’s meal option.</span></li>
+            <li class="planning-item"><strong>Leeuwin Estate</strong><span>Confirm a standard walk-in tasting can start around 4:00pm.</span></li>
             <li class="planning-item"><strong>Ngilgi Cave</strong><span>Book the 3:30pm Ancient Lands Experience.</span></li>
             <li class="planning-item"><strong>2027 transport + holiday hours</strong><span>Recheck trains, CAT services, restaurant openings and attraction hours close to travel.</span></li>
           </ul>
